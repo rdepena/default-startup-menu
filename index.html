@@ -1,164 +1,141 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Startup Menu</title>
-    <link type="text/css" href="css/main.css" rel="stylesheet" />
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+  <head>
+      <title>Startup Menu</title>
+      <link type="text/css" href="css/main.css" rel="stylesheet" />
+      <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css">
 
-    <script type="text/javascript" src="libs/jquery-1.7.2.js"></script>
-    <script type="text/javascript" src="libs/backbone/underscore.js"></script>
-    <script type="text/javascript" src="libs/backbone/json2.js"></script>
-    <script type="text/javascript" src="libs/backbone/backbone.js"></script>
-    <script type="text/javascript" src="libs/handlebars-1.0.0.beta.6.js"></script>
+  </head>
+  <body ng-app="launcher">
+    <div id="startupmenu-container">
 
-    <script type="text/javascript" src="libs/openfin-desktop.js"></script>
+        <div id="startupmenu-sidebar-container">
+            <div id="sidebar-app-list-container">
+              <div>
+                <div id="OpenFin" class="sidebar-option">
+                  <div class="sidebar-image-div">
+                    <img src="img/of.png" class="sidebar-image">
+                  </div>
+                  <div class="sidebar-text">
+                    OpenFin
+                  </div>
+                </div>
+              </div>
 
-    <script>
-        /**
-         * Defines the namespace for the DeskbandMenu Application. Global variables should be appended here to avoid
-         * naming conflicts.
-         **/
-        var dm = {};
-    </script>
+              <div>
+                <div id="My Applications" class="sidebar-option sidebar-option-selected">
+                  <div class="sidebar-image-div">
+                    <img src="img/myapps.png" class="sidebar-image">
+                  </div>
+                  <div class="sidebar-text sidebar-text-selected">
+                    My Applications
+                  </div>
+                </div>
+              </div>
+            </div>
 
-    <script type="text/javascript" language="javascript" src='js/models/ApplicationModel.js'></script>
-    <script type="text/javascript" language="javascript" src='js/views/SidebarView.js'></script>
-    <script type="text/javascript" language="javascript" src='js/controllers/AppDirectoryClient.js'></script>
-    <script type="text/javascript" language="javascript" src='js/controllers/ApplicationController.js'></script>
+            <div id="sidebar-selection-arrow" style="top: 65px; display: block;"></div>
 
-    <script type='text/javascript' language='javascript'>
+            <div class="sidebar-separator"></div>
 
-        dm.interWindowBus = (function () {
-            var bus = {};
-            var callbacks = {};
+            <div id="sidebar-desktop-maint-container">
+              <div>
+                <div id="processes-settings-button" class="sidebar-option">
+                  <div class="sidebar-image-div">
+                    <img src="img/processes.png" class="sidebar-image">
+                  </div>
+                  <div class="sidebar-text">
+                    Processes
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div id="cache-settings-button" class="sidebar-option">
+                  <div class="sidebar-image-div">
+                    <img src="img/cache.png" class="sidebar-image">
+                  </div>
+                  <div class="sidebar-text">
+                    Cache
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div id="logs-settings-button" class="sidebar-option">
+                  <div class="sidebar-image-div">
+                    <img src="img/logs.png" class="sidebar-image">
+                  </div>
+                  <div class="sidebar-text">
+                    Logs
+                  </div>
+                </div>
+              </div>
+              <div class="sidebar-separator"></div>
+            </div>
 
-            bus.subscribe = function (sender, topic, callback) {
-                console.log("Subscribe: ", sender, topic, callback);
-                sender = sender.name;
-                callbacks[sender] = callbacks[sender] || {};
-                callbacks[sender][topic] = callbacks[sender][topic] || [];
-                callbacks[sender][topic].push(callback);
-            };
+            <div id="sidebar-help-container">
+              <div class="sidebar-separator"></div>
+          </div>
 
-            bus.send = function (targetWindow, topic, message) {
-                console.log("sending: ", targetWindow, topic, message);
-                if (targetWindow._dispatchMessage) {
-                    if (targetWindow == window) {
-                        targetWindow._dispatchMessage(targetWindow, topic, message);
-                    } else {
-                        targetWindow._dispatchMessage(topic, message);
-                    }
-                } else {
-                    targetWindow.addEventListener('onload', function() {
-                        targetWindow._dispatchMessage(topic, message);
-                    })
-                }
-            };
+            <div id="sidebar-app-search-container">
+              <div class="sidebar-search-div">
+                <img src="img/search.png" class="sidebar-search-image" alt="">
+                <input type="text" class="sidebar-search-input" placeholder="Search">
+              </div>
+              <div class="sidebar-separator">
+              </div>
+            </div>
+            <div id="sidebar-footer-container">
+              <div>
+                <div id="sidebar-exit-button" class="blue-button">
+                  Exit
+                </div>
+              </div>
+            </div>
+        </div>
 
-            window._dispatchMessage = function (sender, topic, message) {
-                console.log("Dispatch: ", sender, topic, message);
-                sender = sender.name;
+        <div id="startupmenu-detail-container">
+          <div class="create-app-row-view">
 
-                var array = callbacks[sender][topic];
+            <div class="app-row-button-div">
+              <div class="app-row-button create-app-button">
+                Add an App
+              </div>
+            </div>
+        </div>
+        <div ng-controller="myAppsCtrl">
+            <div class="app-row-view" ng-repeat="app in model.apps">
 
-                if (array) {
-                    for (var i = 0; i < array.length; i++) {
-                        array[i](message);
-                    }
-                }
-            };
+                <img class="app-icon" src="{{app.applicationIcon}}">
+                <div class="app-desc-div">
+                  <div class="app-name-text">
+                    {{app.name}}
+                  </div>
+                  <div class="app-description-text">
+                    {{app.description}}
+                  </div>
+                </div>
+                <div class="app-row-button-div" style="display: none;">
+                  <div class="app-remove-button">
+                  </div>
+                  <i class="edit-button icon-edit">
+                  </i>
+                </div>
+              </div>
+            </div>
 
-            return bus;
-        })();
+        </div>
 
-        dm.bus = (function () {
-            var bus = {};
-            bus.subscribe = function (topic, callback) {
-                dm.interWindowBus.subscribe(window, topic, callback);
-            };
-
-            bus.send = function (topic, message) {
-                window._dispatchMessage(window, topic, message);
-            };
-
-            return bus;
-        })();
-
-        var dirClient = new dm.AppDirectoryClient();
-        var controller = new dm.ApplicationController();
-        var startupResourceReady = _.after(2, initController);
-
-        fin.desktop.main(function () {
-//            dm.bus = new fin.desktop.InterApplicationBus();
-
-            startupResourceReady();
-        });
-
-        // test test
-        $(function() {
-            startupResourceReady();
-        });
-
-        function initController() {
-            dirClient.initialize(function() {
-                controller.initialize();
-            })
-
-//            fin.desktop.InterApplicationBus.subscribe("desktopcontroller", "is-new-device", function (newDevice) {
-                if (!localStorage.alreadyRun) {
-                    localStorage.alreadyRun = true;
-                    setTimeout(function () {
-                        $("#add-your-app-tooltip").addClass("show").find(".close-x").click(function () {
-                            $("#add-your-app-tooltip").css('opacity','0');
-                            setTimeout(function () {
-                                $("#add-your-app-tooltip").removeClass("show");
-                            }, 200);
-                        });
-
-                        $("#take-a-tour-tooltip").addClass("show").find(".close-x").click(function () {
-                            $("#take-a-tour-tooltip").css('opacity','0');
-                            setTimeout(function () {
-                                $("#take-a-tour-tooltip").removeClass("show");
-                            }, 200);
-                        });
-                    }, 2000);
-
-                    /*setTimeout(function () {
-                        controller.showStartWindow(undefined,undefined, true);
-                    },1000);*/
-                }
-//            });
-
-    }
-
-    </script>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css">
-
-</head>
-<body>
-
-<div id="startupmenu-container">
-
-    <div id="startupmenu-sidebar-container">
-        <div id="sidebar-app-list-container"></div>
-        <div id="sidebar-selection-arrow"></div>
-        <div class="sidebar-separator"></div>
-        <div id="sidebar-desktop-maint-container"></div>
-        <div id="sidebar-help-container"></div>
-        <div id="sidebar-app-search-container"></div>
-        <div id="sidebar-footer-container"></div>
-    </div>
-    <div id="startupmenu-detail-container">
-
+    <div id="add-your-app-tooltip" class="tooltip">
+        <div class="arrow"></div>
+        <div class="close-x">+</div>
+        <div class="text">Add your own HTML5, Flash, or Silverlight applications</div>
     </div>
 
-</div>
-
-<div id="add-your-app-tooltip" class="tooltip">
-    <div class="arrow"></div>
-    <div class="close-x">+</div>
-    <div class="text">Add your own HTML5, Flash, or Silverlight applications</div>
-</div>
-
-</body>
+  <!-- Scripts -->
+  <script type="text/javascript" src="js/vendor/angular.min.js" charset="utf-8">
+  </script>
+  <script type="text/javascript" src="js/dist/launcher.js" charset="utf-8">
+  </script>
+  </body>
 </html>
